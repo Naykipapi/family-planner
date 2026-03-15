@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 // ============================================
 // CONFIG
@@ -45,6 +45,12 @@ const styles = `
     --radius-sm: 6px;
     --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
     --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+    --color-telman: #1565c0;
+    --color-telman-bg: #e3f2fd;
+    --color-lena: #2e7d32;
+    --color-lena-bg: #e8f5e9;
+    --color-family: #c62828;
+    --color-family-bg: #ffebee;
   }
 
   body {
@@ -65,7 +71,6 @@ const styles = `
     padding-bottom: 72px;
   }
 
-  /* Header */
   .header {
     padding: 16px 20px 12px;
     display: flex;
@@ -101,7 +106,6 @@ const styles = `
     font-family: var(--font-body);
   }
 
-  /* Tab Bar (bottom, iOS-style) */
   .tab-bar {
     position: fixed;
     bottom: 0;
@@ -111,7 +115,6 @@ const styles = `
     border-top: 1px solid var(--border);
     display: flex;
     justify-content: center;
-    gap: 0;
     padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
     z-index: 100;
   }
@@ -135,7 +138,6 @@ const styles = `
   .tab-btn.active { color: var(--text-primary); }
   .tab-btn svg { width: 22px; height: 22px; }
 
-  /* Budget Card */
   .budget-card {
     margin: 0 16px 16px;
     padding: 20px;
@@ -179,7 +181,6 @@ const styles = `
     color: var(--text-tertiary);
   }
 
-  /* View Toggle */
   .view-toggle {
     display: flex;
     margin: 0 16px 16px;
@@ -207,7 +208,6 @@ const styles = `
     box-shadow: var(--shadow);
   }
 
-  /* Section */
   .section {
     margin: 0 16px 20px;
   }
@@ -221,7 +221,6 @@ const styles = `
     padding: 0 4px;
   }
 
-  /* Category Breakdown */
   .cat-row {
     display: flex;
     justify-content: space-between;
@@ -231,14 +230,40 @@ const styles = `
     border: 1px solid var(--border);
     margin-bottom: -1px;
     font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
   }
+  .cat-row:hover { background: var(--bg-hover); }
   .cat-row:first-child { border-radius: var(--radius) var(--radius) 0 0; }
   .cat-row:last-child { border-radius: 0 0 var(--radius) var(--radius); margin-bottom: 0; }
   .cat-row:only-child { border-radius: var(--radius); }
+  .cat-row.active { background: var(--bg-hover); border-color: var(--text-tertiary); }
   .cat-name { color: var(--text-secondary); }
   .cat-amount { font-weight: 600; font-variant-numeric: tabular-nums; }
 
-  /* Expense List */
+  .filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    margin-bottom: 10px;
+    background: var(--accent);
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .filter-pill button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    margin-left: 2px;
+  }
+
   .expense-item {
     display: flex;
     align-items: center;
@@ -247,7 +272,10 @@ const styles = `
     border: 1px solid var(--border);
     margin-bottom: -1px;
     gap: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
   }
+  .expense-item:hover { background: var(--bg-hover); }
   .expense-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
   .expense-item:last-child { border-radius: 0 0 var(--radius) var(--radius); margin-bottom: 0; }
   .expense-item:only-child { border-radius: var(--radius); }
@@ -282,7 +310,58 @@ const styles = `
     flex-shrink: 0;
   }
 
-  /* Add Form */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 300;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-content {
+    background: var(--bg-card);
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-width: 480px;
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .modal-header h3 {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 400;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px;
+  }
+  .btn-delete {
+    width: 100%;
+    padding: 10px;
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid #ffcdd2;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .btn-delete:hover { background: #ffcdd2; }
+
   .add-form-toggle {
     display: flex;
     align-items: center;
@@ -330,7 +409,7 @@ const styles = `
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  .form-field input, .form-field select {
+  .form-field input, .form-field select, .form-field textarea {
     padding: 9px 10px;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -342,7 +421,11 @@ const styles = `
     transition: border-color 0.15s;
     width: 100%;
   }
-  .form-field input:focus, .form-field select:focus {
+  .form-field textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus {
     border-color: var(--border-focus);
   }
   .form-actions {
@@ -377,7 +460,6 @@ const styles = `
     cursor: pointer;
   }
 
-  /* Calendar */
   .cal-header {
     display: flex;
     justify-content: space-between;
@@ -435,7 +517,6 @@ const styles = `
     box-shadow: var(--shadow);
   }
 
-  /* Month Grid */
   .month-grid {
     margin: 0 16px 16px;
     background: var(--bg-card);
@@ -467,6 +548,7 @@ const styles = `
     border-right: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     font-size: 11px;
+    overflow: hidden;
   }
   .month-day:nth-child(7n) { border-right: none; }
   .month-day.other-month { opacity: 0.3; }
@@ -495,14 +577,15 @@ const styles = `
     overflow: hidden;
     text-overflow: ellipsis;
     font-weight: 500;
+    max-width: 100%;
+    display: block;
+    cursor: pointer;
   }
-  .day-event.social { background: #e3f2fd; color: #1565c0; }
-  .day-event.travel { background: #fce4ec; color: #c62828; }
-  .day-event.kids { background: #fff3e0; color: #e65100; }
-  .day-event.work { background: #f3e5f5; color: #7b1fa2; }
-  .day-event.default { background: var(--bg-input); color: var(--text-secondary); }
+  .day-event.who-telman { background: var(--color-telman-bg); color: var(--color-telman); }
+  .day-event.who-lena { background: var(--color-lena-bg); color: var(--color-lena); }
+  .day-event.who-family { background: var(--color-family-bg); color: var(--color-family); }
+  .day-event.who-default { background: var(--bg-input); color: var(--text-secondary); }
 
-  /* Week View */
   .week-view {
     margin: 0 16px 16px;
   }
@@ -527,18 +610,26 @@ const styles = `
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
+    padding: 6px 8px;
+    margin-bottom: 2px;
+    border-radius: 4px;
     font-size: 13px;
+    cursor: pointer;
+    transition: opacity 0.15s;
   }
-  .week-event-title { font-weight: 500; }
-  .week-event-time { color: var(--text-tertiary); font-size: 12px; }
+  .week-event:hover { opacity: 0.8; }
+  .week-event.who-telman { background: var(--color-telman-bg); }
+  .week-event.who-lena { background: var(--color-lena-bg); }
+  .week-event.who-family { background: var(--color-family-bg); }
+  .week-event.who-default { background: var(--bg-input); }
+  .week-event-title { font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .week-event-time { color: var(--text-tertiary); font-size: 12px; flex-shrink: 0; margin-left: 8px; }
   .week-no-events {
     font-size: 12px;
     color: var(--text-tertiary);
     font-style: italic;
   }
 
-  /* Event List */
   .event-item {
     display: flex;
     align-items: flex-start;
@@ -547,7 +638,10 @@ const styles = `
     border: 1px solid var(--border);
     margin-bottom: -1px;
     gap: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
   }
+  .event-item:hover { background: var(--bg-hover); }
   .event-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
   .event-item:last-child { border-radius: 0 0 var(--radius) var(--radius); margin-bottom: 0; }
   .event-item:only-child { border-radius: var(--radius); }
@@ -558,16 +652,14 @@ const styles = `
     margin-top: 5px;
     flex-shrink: 0;
   }
-  .event-dot.social { background: #1565c0; }
-  .event-dot.travel { background: #c62828; }
-  .event-dot.kids { background: #e65100; }
-  .event-dot.work { background: #7b1fa2; }
-  .event-dot.default { background: var(--text-tertiary); }
+  .event-dot.who-telman { background: var(--color-telman); }
+  .event-dot.who-lena { background: var(--color-lena); }
+  .event-dot.who-family { background: var(--color-family); }
+  .event-dot.who-default { background: var(--text-tertiary); }
   .event-details { flex: 1; }
   .event-title { font-size: 14px; font-weight: 500; }
   .event-meta { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
 
-  /* Sign In */
   .sign-in-screen {
     display: flex;
     flex-direction: column;
@@ -607,7 +699,6 @@ const styles = `
   .google-btn:hover { box-shadow: var(--shadow-lg); }
   .google-btn svg { width: 20px; height: 20px; }
 
-  /* Loading */
   .loading {
     display: flex;
     align-items: center;
@@ -617,7 +708,6 @@ const styles = `
     font-size: 14px;
   }
 
-  /* Empty state */
   .empty-state {
     text-align: center;
     padding: 32px 16px;
@@ -625,7 +715,6 @@ const styles = `
     font-size: 13px;
   }
 
-  /* Toast */
   .toast {
     position: fixed;
     bottom: 84px;
@@ -644,7 +733,6 @@ const styles = `
   @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
   @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
 
-  /* Month History */
   .month-history-row {
     display: flex;
     justify-content: space-between;
@@ -659,10 +747,25 @@ const styles = `
   .month-history-row:last-child { border-radius: 0 0 var(--radius) var(--radius); }
   .month-history-label { color: var(--text-secondary); }
   .month-history-amount { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .confirm-dialog {
+    padding: 20px;
+    text-align: center;
+  }
+  .confirm-dialog p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+  .confirm-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .confirm-actions button { flex: 1; }
 `;
 
 // ============================================
-// CATEGORY ICONS
+// HELPERS
 // ============================================
 const CATEGORY_ICONS = {
   'Food & Drink': '🍽',
@@ -672,12 +775,9 @@ const CATEGORY_ICONS = {
   'Health & Wellness': '💊',
 };
 
-// ============================================
-// HELPERS
-// ============================================
 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const dayNamesFull = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const dayNamesMon = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const dayNamesFullMon = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
 function formatCurrency(n) {
   return '€' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -707,12 +807,24 @@ function getEventWho(event) {
   return match ? match[1] : 'Family';
 }
 
+function getWhoClass(who) {
+  const w = (who || '').toLowerCase();
+  if (w === 'telman') return 'who-telman';
+  if (w === 'lena') return 'who-lena';
+  if (w === 'family') return 'who-family';
+  return 'who-default';
+}
+
 function cleanEventTitle(event) {
   return (event.summary || '').replace(/^\[\w+\]\s*/, '');
 }
 
+function getMondayDow(date) {
+  return (date.getDay() + 6) % 7;
+}
+
 // ============================================
-// GOOGLE AUTH HOOK
+// HOOKS
 // ============================================
 function useGoogleAuth() {
   const [user, setUser] = useState(null);
@@ -721,7 +833,6 @@ function useGoogleAuth() {
   const [gsiReady, setGsiReady] = useState(false);
 
   useEffect(() => {
-    // Load GAPI
     const loadGapi = () => {
       if (window.gapi) {
         window.gapi.load('client', async () => {
@@ -734,19 +845,12 @@ function useGoogleAuth() {
         setTimeout(loadGapi, 100);
       }
     };
-
-    // Load GSI
     const loadGsi = () => {
       if (window.google?.accounts?.oauth2) {
         const client = window.google.accounts.oauth2.initTokenClient({
           client_id: CONFIG.CLIENT_ID,
           scope: CONFIG.SCOPES,
-          callback: (resp) => {
-            if (resp.access_token) {
-              // Decode user info from the access token
-              fetchUserInfo(resp.access_token);
-            }
-          },
+          callback: (resp) => { if (resp.access_token) fetchUserInfo(resp.access_token); },
         });
         setTokenClient(client);
         setGsiReady(true);
@@ -754,7 +858,6 @@ function useGoogleAuth() {
         setTimeout(loadGsi, 100);
       }
     };
-
     loadGapi();
     loadGsi();
   }, []);
@@ -767,37 +870,20 @@ function useGoogleAuth() {
       const info = await res.json();
       const firstName = (info.given_name || info.name || '').split(' ')[0];
       const matchedUser = CONFIG.USERS.find(u => u.toLowerCase() === firstName.toLowerCase());
-      setUser({
-        name: matchedUser || firstName,
-        email: info.email,
-        picture: info.picture,
-      });
-    } catch (err) {
-      console.error('Failed to get user info', err);
-    }
+      setUser({ name: matchedUser || firstName, email: info.email, picture: info.picture });
+    } catch (err) { console.error('Failed to get user info', err); }
   };
 
-  const signIn = () => {
-    if (tokenClient) {
-      tokenClient.requestAccessToken();
-    }
-  };
-
+  const signIn = () => { if (tokenClient) tokenClient.requestAccessToken(); };
   const signOut = () => {
     const token = window.gapi?.client?.getToken();
-    if (token) {
-      window.google.accounts.oauth2.revoke(token.access_token);
-      window.gapi.client.setToken(null);
-    }
+    if (token) { window.google.accounts.oauth2.revoke(token.access_token); window.gapi.client.setToken(null); }
     setUser(null);
   };
 
   return { user, signIn, signOut, ready: gapiReady && gsiReady };
 }
 
-// ============================================
-// GOOGLE SHEETS HOOK
-// ============================================
 function useSheets() {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -806,61 +892,56 @@ function useSheets() {
     setLoading(true);
     try {
       const response = await window.gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: CONFIG.SPREADSHEET_ID,
-        range: 'Expenses!A2:H1000',
+        spreadsheetId: CONFIG.SPREADSHEET_ID, range: 'Expenses!A2:H10000',
       });
       const rows = response.result.values || [];
-      const mapped = rows.map((r, i) => ({
-        id: i,
-        merchant: r[0] || '',
-        amount: parseFloat(r[1]) || 0,
-        date: r[2] || '',
-        category: r[3] || '',
-        who: r[4] || '',
-        tag: r[5] || '',
-        notes: r[6] || '',
-        account: r[7] || '',
-      }));
-      setExpenses(mapped);
-    } catch (err) {
-      console.error('Sheets fetch error:', err);
-    }
+      setExpenses(rows.map((r, i) => ({
+        rowIndex: i + 2, merchant: r[0] || '', amount: parseFloat(r[1]) || 0,
+        date: r[2] || '', category: r[3] || '', who: r[4] || '',
+        tag: r[5] || '', notes: r[6] || '', account: r[7] || '',
+      })));
+    } catch (err) { console.error('Sheets fetch error:', err); }
     setLoading(false);
   }, []);
 
   const addExpense = useCallback(async (expense) => {
     try {
       await window.gapi.client.sheets.spreadsheets.values.append({
-        spreadsheetId: CONFIG.SPREADSHEET_ID,
-        range: 'Expenses!A:H',
-        valueInputOption: 'USER_ENTERED',
-        resource: {
-          values: [[
-            expense.merchant,
-            expense.amount,
-            expense.date,
-            expense.category,
-            expense.who,
-            expense.tag || '',
-            expense.notes || '',
-            expense.account || '',
-          ]],
-        },
+        spreadsheetId: CONFIG.SPREADSHEET_ID, range: 'Expenses!A:H', valueInputOption: 'USER_ENTERED',
+        resource: { values: [[ expense.merchant, expense.amount, expense.date, expense.category, expense.who, expense.tag || '', expense.notes || '', expense.account || '' ]] },
       });
       await fetchExpenses();
       return true;
-    } catch (err) {
-      console.error('Sheets append error:', err);
-      return false;
-    }
+    } catch (err) { console.error('Sheets append error:', err); return false; }
   }, [fetchExpenses]);
 
-  return { expenses, loading, fetchExpenses, addExpense };
+  const updateExpense = useCallback(async (rowIndex, expense) => {
+    try {
+      await window.gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: CONFIG.SPREADSHEET_ID, range: `Expenses!A${rowIndex}:H${rowIndex}`, valueInputOption: 'USER_ENTERED',
+        resource: { values: [[ expense.merchant, expense.amount, expense.date, expense.category, expense.who, expense.tag || '', expense.notes || '', expense.account || '' ]] },
+      });
+      await fetchExpenses();
+      return true;
+    } catch (err) { console.error('Sheets update error:', err); return false; }
+  }, [fetchExpenses]);
+
+  const deleteExpense = useCallback(async (rowIndex) => {
+    try {
+      const meta = await window.gapi.client.sheets.spreadsheets.get({ spreadsheetId: CONFIG.SPREADSHEET_ID });
+      const sheet = meta.result.sheets.find(s => s.properties.title === 'Expenses');
+      await window.gapi.client.sheets.spreadsheets.batchUpdate({
+        spreadsheetId: CONFIG.SPREADSHEET_ID,
+        resource: { requests: [{ deleteDimension: { range: { sheetId: sheet.properties.sheetId, dimension: 'ROWS', startIndex: rowIndex - 1, endIndex: rowIndex } } }] },
+      });
+      await fetchExpenses();
+      return true;
+    } catch (err) { console.error('Sheets delete error:', err); return false; }
+  }, [fetchExpenses]);
+
+  return { expenses, loading, fetchExpenses, addExpense, updateExpense, deleteExpense };
 }
 
-// ============================================
-// GOOGLE CALENDAR HOOK
-// ============================================
 function useCalendar() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -869,340 +950,271 @@ function useCalendar() {
     setLoading(true);
     try {
       const response = await window.gapi.client.calendar.events.list({
-        calendarId: CONFIG.CALENDAR_ID,
-        timeMin: timeMin.toISOString(),
-        timeMax: timeMax.toISOString(),
-        singleEvents: true,
-        orderBy: 'startTime',
-        maxResults: 200,
+        calendarId: CONFIG.CALENDAR_ID, timeMin: timeMin.toISOString(), timeMax: timeMax.toISOString(),
+        singleEvents: true, orderBy: 'startTime', maxResults: 200,
       });
       setEvents(response.result.items || []);
-    } catch (err) {
-      console.error('Calendar fetch error:', err);
-    }
+    } catch (err) { console.error('Calendar fetch error:', err); }
     setLoading(false);
   }, []);
 
   const addEvent = useCallback(async (event) => {
     try {
       const who = event.who || 'Family';
-      const title = `[${who}] ${event.title}`;
-      const description = `Category: ${event.category || 'Social'}`;
-
-      const resource = { summary: title, description };
+      const resource = { summary: `[${who}] ${event.title}`, description: `Category: ${event.category || 'Social'}` };
       if (event.location) resource.location = event.location;
-
       if (event.allDay) {
         resource.start = { date: event.startDate };
-        resource.end = { date: event.endDate || event.startDate };
+        const end = new Date(event.endDate); end.setDate(end.getDate() + 1);
+        resource.end = { date: end.toISOString().split('T')[0] };
       } else {
         resource.start = { dateTime: event.startDateTime, timeZone: 'Europe/Berlin' };
         resource.end = { dateTime: event.endDateTime, timeZone: 'Europe/Berlin' };
       }
-
-      await window.gapi.client.calendar.events.insert({
-        calendarId: CONFIG.CALENDAR_ID,
-        resource,
-      });
+      await window.gapi.client.calendar.events.insert({ calendarId: CONFIG.CALENDAR_ID, resource });
       return true;
-    } catch (err) {
-      console.error('Calendar insert error:', err);
-      return false;
-    }
+    } catch (err) { console.error('Calendar insert error:', err); return false; }
   }, []);
 
-  return { events, loading, fetchEvents, addEvent };
+  const updateEvent = useCallback(async (eventId, event) => {
+    try {
+      const who = event.who || 'Family';
+      const resource = { summary: `[${who}] ${event.title}`, description: `Category: ${event.category || 'Social'}` };
+      if (event.location) resource.location = event.location;
+      if (event.allDay) {
+        resource.start = { date: event.startDate };
+        const end = new Date(event.endDate); end.setDate(end.getDate() + 1);
+        resource.end = { date: end.toISOString().split('T')[0] };
+      } else {
+        resource.start = { dateTime: event.startDateTime, timeZone: 'Europe/Berlin' };
+        resource.end = { dateTime: event.endDateTime, timeZone: 'Europe/Berlin' };
+      }
+      await window.gapi.client.calendar.events.update({ calendarId: CONFIG.CALENDAR_ID, eventId, resource });
+      return true;
+    } catch (err) { console.error('Calendar update error:', err); return false; }
+  }, []);
+
+  const deleteEvent = useCallback(async (eventId) => {
+    try {
+      await window.gapi.client.calendar.events.delete({ calendarId: CONFIG.CALENDAR_ID, eventId });
+      return true;
+    } catch (err) { console.error('Calendar delete error:', err); return false; }
+  }, []);
+
+  return { events, loading, fetchEvents, addEvent, updateEvent, deleteEvent };
 }
 
 // ============================================
-// SVG ICONS
+// ICONS
 // ============================================
 const Icons = {
-  finances: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
-    </svg>
-  ),
-  calendar: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-    </svg>
-  ),
-  plus: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  ),
-  left: '‹',
-  right: '›',
+  finances: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>),
+  calendar: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>),
+  left: '‹', right: '›',
 };
 
 // ============================================
-// ADD EXPENSE FORM
+// FORMS
 // ============================================
-function AddExpenseForm({ user, onAdd, onCancel }) {
+function ExpenseForm({ initial, user, onSave, onCancel, saveLabel }) {
   const today = new Date().toISOString().split('T')[0];
   const [form, setForm] = useState({
-    merchant: '', amount: '', date: today, category: CONFIG.EXPENSE_CATEGORIES[0],
-    who: user?.name || 'Telman', tag: '', notes: '', account: CONFIG.ACCOUNTS[0],
+    merchant: initial?.merchant || '', amount: initial?.amount || '', date: initial?.date || today,
+    category: initial?.category || CONFIG.EXPENSE_CATEGORIES[0], who: initial?.who || user?.name || 'Telman',
+    tag: initial?.tag || '', notes: initial?.notes || '', account: initial?.account || CONFIG.ACCOUNTS[0],
   });
   const [saving, setSaving] = useState(false);
-
   const handleSubmit = async () => {
     if (!form.merchant || !form.amount) return;
     setSaving(true);
-    const success = await onAdd({ ...form, amount: parseFloat(form.amount) });
+    const success = await onSave({ ...form, amount: parseFloat(form.amount) });
     setSaving(false);
     if (success) onCancel();
   };
-
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   return (
     <div className="add-form">
       <div className="form-row">
-        <div className="form-field" style={{ flex: 2 }}>
-          <label>Merchant</label>
-          <input value={form.merchant} onChange={e => set('merchant', e.target.value)} placeholder="e.g. Rewe" />
-        </div>
-        <div className="form-field" style={{ flex: 1 }}>
-          <label>Amount €</label>
-          <input type="number" step="0.01" value={form.amount} onChange={e => set('amount', e.target.value)} placeholder="0.00" />
-        </div>
+        <div className="form-field" style={{ flex: 2 }}><label>Merchant</label><input value={form.merchant} onChange={e => set('merchant', e.target.value)} placeholder="e.g. Rewe" /></div>
+        <div className="form-field" style={{ flex: 1 }}><label>Amount €</label><input type="number" step="0.01" value={form.amount} onChange={e => set('amount', e.target.value)} placeholder="0.00" /></div>
       </div>
       <div className="form-row">
-        <div className="form-field">
-          <label>Date</label>
-          <input type="date" value={form.date} onChange={e => set('date', e.target.value)} />
-        </div>
-        <div className="form-field">
-          <label>Category</label>
-          <select value={form.category} onChange={e => set('category', e.target.value)}>
-            {CONFIG.EXPENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
+        <div className="form-field"><label>Date</label><input type="date" value={form.date} onChange={e => set('date', e.target.value)} /></div>
+        <div className="form-field"><label>Category</label><select value={form.category} onChange={e => set('category', e.target.value)}>{CONFIG.EXPENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
       </div>
       <div className="form-row">
-        <div className="form-field">
-          <label>Who</label>
-          <select value={form.who} onChange={e => set('who', e.target.value)}>
-            {CONFIG.USERS.map(u => <option key={u} value={u}>{u}</option>)}
-          </select>
-        </div>
-        <div className="form-field">
-          <label>Account</label>
-          <select value={form.account} onChange={e => set('account', e.target.value)}>
-            {CONFIG.ACCOUNTS.map(a => <option key={a} value={a}>{a}</option>)}
-          </select>
-        </div>
+        <div className="form-field"><label>Who</label><select value={form.who} onChange={e => set('who', e.target.value)}>{CONFIG.USERS.map(u => <option key={u} value={u}>{u}</option>)}</select></div>
+        <div className="form-field"><label>Account</label><select value={form.account} onChange={e => set('account', e.target.value)}>{CONFIG.ACCOUNTS.map(a => <option key={a} value={a}>{a}</option>)}</select></div>
       </div>
-      <div className="form-row">
-        <div className="form-field">
-          <label>Tag (optional)</label>
-          <input value={form.tag} onChange={e => set('tag', e.target.value)} placeholder="e.g. Rome trip" />
-        </div>
-      </div>
+      <div className="form-row"><div className="form-field"><label>Tag (optional)</label><input value={form.tag} onChange={e => set('tag', e.target.value)} placeholder="e.g. Rome trip" /></div></div>
+      <div className="form-row"><div className="form-field"><label>Notes (optional)</label><textarea value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Any additional notes..." /></div></div>
       <div className="form-actions">
         <button className="btn-secondary" onClick={onCancel}>Cancel</button>
-        <button className="btn-primary" onClick={handleSubmit} disabled={!form.merchant || !form.amount || saving}>
-          {saving ? 'Saving...' : 'Add Expense'}
-        </button>
+        <button className="btn-primary" onClick={handleSubmit} disabled={!form.merchant || !form.amount || saving}>{saving ? 'Saving...' : saveLabel || 'Add Expense'}</button>
+      </div>
+    </div>
+  );
+}
+
+function EventForm({ initial, user, onSave, onCancel, saveLabel }) {
+  const today = new Date().toISOString().split('T')[0];
+  const [form, setForm] = useState({
+    title: initial?.title || '', startDate: initial?.startDate || today, startTime: initial?.startTime || '09:00',
+    endDate: initial?.endDate || today, endTime: initial?.endTime || '10:00', allDay: initial?.allDay || false,
+    location: initial?.location || '', who: initial?.who || user?.name || 'Telman', category: initial?.category || CONFIG.EVENT_CATEGORIES[0],
+  });
+  const [saving, setSaving] = useState(false);
+  const handleSubmit = async () => {
+    if (!form.title) return;
+    setSaving(true);
+    const eventData = { title: form.title, who: form.who, category: form.category, location: form.location, allDay: form.allDay };
+    if (form.allDay) { eventData.startDate = form.startDate; eventData.endDate = form.endDate; }
+    else { eventData.startDateTime = `${form.startDate}T${form.startTime}:00`; eventData.endDateTime = `${form.endDate}T${form.endTime}:00`; }
+    const success = await onSave(eventData);
+    setSaving(false);
+    if (success) onCancel();
+  };
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  return (
+    <div className="add-form">
+      <div className="form-row"><div className="form-field"><label>Title</label><input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Dinner with friends" /></div></div>
+      <div className="form-row">
+        <div className="form-field"><label>Who</label><select value={form.who} onChange={e => set('who', e.target.value)}>{[...CONFIG.USERS, 'Family'].map(u => <option key={u} value={u}>{u}</option>)}</select></div>
+        <div className="form-field"><label>Category</label><select value={form.category} onChange={e => set('category', e.target.value)}>{CONFIG.EVENT_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
+      </div>
+      <div className="form-row">
+        <div className="form-field" style={{ flex: 'none' }}><label>All Day</label><input type="checkbox" checked={form.allDay} onChange={e => set('allDay', e.target.checked)} style={{ width: 18, height: 18, marginTop: 4 }} /></div>
+        <div className="form-field"><label>Start Date</label><input type="date" value={form.startDate} onChange={e => set('startDate', e.target.value)} /></div>
+        {!form.allDay && <div className="form-field"><label>Start Time</label><input type="time" value={form.startTime} onChange={e => set('startTime', e.target.value)} /></div>}
+      </div>
+      <div className="form-row">
+        <div className="form-field"><label>End Date</label><input type="date" value={form.endDate} onChange={e => set('endDate', e.target.value)} /></div>
+        {!form.allDay && <div className="form-field"><label>End Time</label><input type="time" value={form.endTime} onChange={e => set('endTime', e.target.value)} /></div>}
+      </div>
+      <div className="form-row"><div className="form-field"><label>Location (optional)</label><input value={form.location} onChange={e => set('location', e.target.value)} placeholder="e.g. Restaurant Zum Löwen" /></div></div>
+      <div className="form-actions">
+        <button className="btn-secondary" onClick={onCancel}>Cancel</button>
+        <button className="btn-primary" onClick={handleSubmit} disabled={!form.title || saving}>{saving ? 'Saving...' : saveLabel || 'Add Event'}</button>
       </div>
     </div>
   );
 }
 
 // ============================================
-// ADD EVENT FORM
+// EDIT MODALS
 // ============================================
-function AddEventForm({ user, onAdd, onCancel }) {
-  const today = new Date().toISOString().split('T')[0];
-  const [form, setForm] = useState({
-    title: '', startDate: today, startTime: '09:00', endDate: today, endTime: '10:00',
-    allDay: false, location: '', who: user?.name || 'Telman', category: CONFIG.EVENT_CATEGORIES[0],
-  });
-  const [saving, setSaving] = useState(false);
+function EditExpenseModal({ expense, user, onUpdate, onDelete, onClose }) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const handleDelete = async () => { setDeleting(true); await onDelete(expense.rowIndex); setDeleting(false); onClose(); };
 
-  const handleSubmit = async () => {
-    if (!form.title) return;
-    setSaving(true);
-    const eventData = {
-      title: form.title,
-      who: form.who,
-      category: form.category,
-      location: form.location,
-      allDay: form.allDay,
-    };
-    if (form.allDay) {
-      eventData.startDate = form.startDate;
-      eventData.endDate = form.endDate;
-    } else {
-      eventData.startDateTime = `${form.startDate}T${form.startTime}:00`;
-      eventData.endDateTime = `${form.endDate}T${form.endTime}:00`;
-    }
-    const success = await onAdd(eventData);
-    setSaving(false);
-    if (success) onCancel();
-  };
-
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  if (confirmDelete) return (
+    <div className="modal-overlay" onClick={onClose}><div className="modal-content" onClick={e => e.stopPropagation()}>
+      <div className="confirm-dialog"><p>Delete "{expense.merchant}" ({formatCurrency(expense.amount)})?</p>
+      <div className="confirm-actions"><button className="btn-secondary" onClick={() => setConfirmDelete(false)}>Cancel</button><button className="btn-delete" onClick={handleDelete} disabled={deleting}>{deleting ? 'Deleting...' : 'Delete'}</button></div></div>
+    </div></div>
+  );
 
   return (
-    <div className="add-form">
-      <div className="form-row">
-        <div className="form-field">
-          <label>Title</label>
-          <input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Dinner with friends" />
-        </div>
-      </div>
-      <div className="form-row">
-        <div className="form-field">
-          <label>Who</label>
-          <select value={form.who} onChange={e => set('who', e.target.value)}>
-            {[...CONFIG.USERS, 'Family'].map(u => <option key={u} value={u}>{u}</option>)}
-          </select>
-        </div>
-        <div className="form-field">
-          <label>Category</label>
-          <select value={form.category} onChange={e => set('category', e.target.value)}>
-            {CONFIG.EVENT_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
-      </div>
-      <div className="form-row">
-        <div className="form-field" style={{ flex: 'none' }}>
-          <label>All Day</label>
-          <input type="checkbox" checked={form.allDay} onChange={e => set('allDay', e.target.checked)} style={{ width: 18, height: 18, marginTop: 4 }} />
-        </div>
-        <div className="form-field">
-          <label>Start Date</label>
-          <input type="date" value={form.startDate} onChange={e => set('startDate', e.target.value)} />
-        </div>
-        {!form.allDay && (
-          <div className="form-field">
-            <label>Start Time</label>
-            <input type="time" value={form.startTime} onChange={e => set('startTime', e.target.value)} />
-          </div>
-        )}
-      </div>
-      <div className="form-row">
-        <div className="form-field">
-          <label>End Date</label>
-          <input type="date" value={form.endDate} onChange={e => set('endDate', e.target.value)} />
-        </div>
-        {!form.allDay && (
-          <div className="form-field">
-            <label>End Time</label>
-            <input type="time" value={form.endTime} onChange={e => set('endTime', e.target.value)} />
-          </div>
-        )}
-      </div>
-      <div className="form-row">
-        <div className="form-field">
-          <label>Location (optional)</label>
-          <input value={form.location} onChange={e => set('location', e.target.value)} placeholder="e.g. Restaurant Zum Löwen" />
-        </div>
-      </div>
-      <div className="form-actions">
-        <button className="btn-secondary" onClick={onCancel}>Cancel</button>
-        <button className="btn-primary" onClick={handleSubmit} disabled={!form.title || saving}>
-          {saving ? 'Saving...' : 'Add Event'}
-        </button>
-      </div>
-    </div>
+    <div className="modal-overlay" onClick={onClose}><div className="modal-content" onClick={e => e.stopPropagation()}>
+      <div className="modal-header"><h3>Edit Expense</h3><button className="modal-close" onClick={onClose}>✕</button></div>
+      <ExpenseForm initial={expense} user={user} onSave={async (updated) => { const s = await onUpdate(expense.rowIndex, updated); if (s) onClose(); return s; }} onCancel={onClose} saveLabel="Save Changes" />
+      <button className="btn-delete" onClick={() => setConfirmDelete(true)}>Delete Expense</button>
+    </div></div>
+  );
+}
+
+function EditEventModal({ event, user, onUpdate, onDelete, onClose, onRefresh }) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const who = getEventWho(event);
+  const title = cleanEventTitle(event);
+  const cat = getEventCategory(event);
+  const catCap = cat.charAt(0).toUpperCase() + cat.slice(1);
+  const isAllDay = !!event.start?.date;
+  const startDate = isAllDay ? event.start.date : (event.start?.dateTime || '').slice(0, 10);
+  const startTime = isAllDay ? '09:00' : (event.start?.dateTime || '').slice(11, 16);
+  const endDateRaw = isAllDay ? event.end.date : (event.end?.dateTime || '').slice(0, 10);
+  let endDate = endDateRaw;
+  if (isAllDay && endDateRaw) { const ed = new Date(endDateRaw); ed.setDate(ed.getDate() - 1); endDate = ed.toISOString().split('T')[0]; }
+  const endTime = isAllDay ? '10:00' : (event.end?.dateTime || '').slice(11, 16);
+  const initial = { title, who, category: catCap === 'Default' ? 'Social' : catCap, location: event.location || '', allDay: isAllDay, startDate, startTime, endDate, endTime };
+
+  const handleDelete = async () => { setDeleting(true); const s = await onDelete(event.id); setDeleting(false); if (s) { onRefresh(); onClose(); } };
+
+  if (confirmDelete) return (
+    <div className="modal-overlay" onClick={onClose}><div className="modal-content" onClick={e => e.stopPropagation()}>
+      <div className="confirm-dialog"><p>Delete "{title}"?</p>
+      <div className="confirm-actions"><button className="btn-secondary" onClick={() => setConfirmDelete(false)}>Cancel</button><button className="btn-delete" onClick={handleDelete} disabled={deleting}>{deleting ? 'Deleting...' : 'Delete'}</button></div></div>
+    </div></div>
+  );
+
+  return (
+    <div className="modal-overlay" onClick={onClose}><div className="modal-content" onClick={e => e.stopPropagation()}>
+      <div className="modal-header"><h3>Edit Event</h3><button className="modal-close" onClick={onClose}>✕</button></div>
+      <EventForm initial={initial} user={user} onSave={async (updated) => { const s = await onUpdate(event.id, updated); if (s) { onRefresh(); onClose(); } return s; }} onCancel={onClose} saveLabel="Save Changes" />
+      <button className="btn-delete" onClick={() => setConfirmDelete(true)}>Delete Event</button>
+    </div></div>
   );
 }
 
 // ============================================
 // FINANCES TAB
 // ============================================
-function FinancesTab({ user, expenses, loading, onAddExpense, onRefresh }) {
-  const [viewMode, setViewMode] = useState('individual'); // individual | combined
+function FinancesTab({ user, expenses, loading, onAddExpense, onUpdateExpense, onDeleteExpense, onRefresh }) {
+  const [viewMode, setViewMode] = useState('individual');
   const [showForm, setShowForm] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState(null);
 
   useEffect(() => { onRefresh(); }, [onRefresh]);
 
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
-
-  // Filter for current month
-  const monthExpenses = expenses.filter(e => {
-    const d = new Date(e.date);
-    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-  });
-
-  // Filter by view
-  const filtered = viewMode === 'individual'
-    ? monthExpenses.filter(e => e.who === user.name)
-    : monthExpenses;
-
+  const monthExpenses = expenses.filter(e => { const d = new Date(e.date); return d.getMonth() === currentMonth && d.getFullYear() === currentYear; });
+  const filtered = viewMode === 'individual' ? monthExpenses.filter(e => e.who === user.name) : monthExpenses;
   const totalSpent = filtered.reduce((s, e) => s + e.amount, 0);
   const budget = viewMode === 'individual' ? CONFIG.BUDGET_PER_PERSON : CONFIG.BUDGET_PER_PERSON * 2;
   const remaining = budget - totalSpent;
   const pct = Math.min((totalSpent / budget) * 100, 100);
   const barColor = pct < 60 ? 'green' : pct < 85 ? 'amber' : 'red';
 
-  // Category breakdown
   const byCategory = {};
-  filtered.forEach(e => {
-    byCategory[e.category] = (byCategory[e.category] || 0) + e.amount;
-  });
+  filtered.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + e.amount; });
   const categoryList = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
 
-  // Month history (last 6 months)
+  const displayExpenses = categoryFilter ? filtered.filter(e => e.category === categoryFilter) : filtered;
+  const recent = [...displayExpenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+
   const monthHistory = [];
   for (let i = 0; i < 6; i++) {
     const m = new Date(currentYear, currentMonth - i, 1);
-    const mExpenses = expenses.filter(e => {
-      const d = new Date(e.date);
-      return d.getMonth() === m.getMonth() && d.getFullYear() === m.getFullYear() &&
-        (viewMode === 'combined' || e.who === user.name);
-    });
-    const total = mExpenses.reduce((s, e) => s + e.amount, 0);
-    if (i > 0 || total > 0 || mExpenses.length > 0) {
-      monthHistory.push({ label: monthNames[m.getMonth()] + ' ' + m.getFullYear(), total });
-    }
+    const mExp = expenses.filter(e => { const d = new Date(e.date); return d.getMonth() === m.getMonth() && d.getFullYear() === m.getFullYear() && (viewMode === 'combined' || e.who === user.name); });
+    const total = mExp.reduce((s, e) => s + e.amount, 0);
+    if (i > 0 || total > 0 || mExp.length > 0) monthHistory.push({ label: monthNames[m.getMonth()] + ' ' + m.getFullYear(), total });
   }
-
-  // Recent expenses (latest first)
-  const recent = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-  const handleAdd = async (expense) => {
-    const success = await onAddExpense(expense);
-    return success;
-  };
 
   return (
     <>
-      {/* View Toggle */}
       <div className="view-toggle">
-        <button className={viewMode === 'individual' ? 'active' : ''} onClick={() => setViewMode('individual')}>
-          {user.name}
-        </button>
-        <button className={viewMode === 'combined' ? 'active' : ''} onClick={() => setViewMode('combined')}>
-          Combined
-        </button>
+        <button className={viewMode === 'individual' ? 'active' : ''} onClick={() => setViewMode('individual')}>{user.name}</button>
+        <button className={viewMode === 'combined' ? 'active' : ''} onClick={() => setViewMode('combined')}>Combined</button>
       </div>
 
-      {/* Budget Card */}
       <div className="budget-card">
-        <div className="budget-header">
-          <span className="budget-label">{monthNames[currentMonth]} Budget</span>
-          <span className="budget-amount">{formatCurrency(remaining)}</span>
-        </div>
-        <div className="budget-bar-track">
-          <div className={`budget-bar-fill ${barColor}`} style={{ width: `${pct}%` }} />
-        </div>
-        <div className="budget-sub">
-          {formatCurrency(totalSpent)} of {formatCurrency(budget)} spent
-        </div>
+        <div className="budget-header"><span className="budget-label">{monthNames[currentMonth]} Budget</span><span className="budget-amount">{formatCurrency(remaining)}</span></div>
+        <div className="budget-bar-track"><div className={`budget-bar-fill ${barColor}`} style={{ width: `${pct}%` }} /></div>
+        <div className="budget-sub">{formatCurrency(totalSpent)} of {formatCurrency(budget)} spent</div>
       </div>
 
-      {/* Category Breakdown */}
       {categoryList.length > 0 && (
         <div className="section">
           <div className="section-title">By Category</div>
           {categoryList.map(([cat, amount]) => (
-            <div className="cat-row" key={cat}>
+            <div className={`cat-row ${categoryFilter === cat ? 'active' : ''}`} key={cat} onClick={() => setCategoryFilter(categoryFilter === cat ? null : cat)}>
               <span className="cat-name">{CATEGORY_ICONS[cat] || '•'} {cat}</span>
               <span className="cat-amount">{formatCurrency(amount)}</span>
             </div>
@@ -1210,46 +1222,34 @@ function FinancesTab({ user, expenses, loading, onAddExpense, onRefresh }) {
         </div>
       )}
 
-      {/* Add Expense */}
       <div className="section">
         <div className="section-title">Expenses</div>
-        {showForm ? (
-          <AddExpenseForm user={user} onAdd={handleAdd} onCancel={() => setShowForm(false)} />
-        ) : (
-          <button className="add-form-toggle" onClick={() => setShowForm(true)}>
-            <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Add Expense
-          </button>
+        {showForm ? <ExpenseForm user={user} onSave={onAddExpense} onCancel={() => setShowForm(false)} saveLabel="Add Expense" /> : (
+          <button className="add-form-toggle" onClick={() => setShowForm(true)}><span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Add Expense</button>
         )}
-        {loading ? (
-          <div className="loading">Loading expenses...</div>
-        ) : recent.length === 0 ? (
-          <div className="empty-state">No expenses this month yet.</div>
-        ) : (
-          recent.map((e, i) => (
-            <div className="expense-item" key={i}>
-              <div className="expense-icon">{CATEGORY_ICONS[e.category] || '•'}</div>
-              <div className="expense-details">
-                <div className="expense-merchant">{e.merchant}</div>
-                <div className="expense-meta">{formatDate(e.date)} · {e.category}{e.account ? ` · ${e.account}` : ''}</div>
-              </div>
-              <div className="expense-amount">{formatCurrency(e.amount)}</div>
+        {categoryFilter && <div className="filter-pill">{CATEGORY_ICONS[categoryFilter] || '•'} {categoryFilter}<button onClick={() => setCategoryFilter(null)}>✕</button></div>}
+        {loading ? <div className="loading">Loading expenses...</div> : recent.length === 0 ? (
+          <div className="empty-state">{categoryFilter ? 'No expenses in this category.' : 'No expenses this month yet.'}</div>
+        ) : recent.map((e, i) => (
+          <div className="expense-item" key={i} onClick={() => setEditingExpense(e)}>
+            <div className="expense-icon">{CATEGORY_ICONS[e.category] || '•'}</div>
+            <div className="expense-details">
+              <div className="expense-merchant">{e.merchant}</div>
+              <div className="expense-meta">{formatDate(e.date)} · {e.category}{e.account ? ` · ${e.account}` : ''}{viewMode === 'combined' && e.who ? ` · ${e.who}` : ''}</div>
             </div>
-          ))
-        )}
+            <div className="expense-amount">{formatCurrency(e.amount)}</div>
+          </div>
+        ))}
       </div>
 
-      {/* Month History */}
       {monthHistory.length > 1 && (
         <div className="section">
           <div className="section-title">Monthly History</div>
-          {monthHistory.map((m, i) => (
-            <div className="month-history-row" key={i}>
-              <span className="month-history-label">{m.label}</span>
-              <span className="month-history-amount">{formatCurrency(m.total)}</span>
-            </div>
-          ))}
+          {monthHistory.map((m, i) => (<div className="month-history-row" key={i}><span className="month-history-label">{m.label}</span><span className="month-history-amount">{formatCurrency(m.total)}</span></div>))}
         </div>
       )}
+
+      {editingExpense && <EditExpenseModal expense={editingExpense} user={user} onUpdate={onUpdateExpense} onDelete={onDeleteExpense} onClose={() => setEditingExpense(null)} />}
     </>
   );
 }
@@ -1257,147 +1257,104 @@ function FinancesTab({ user, expenses, loading, onAddExpense, onRefresh }) {
 // ============================================
 // CALENDAR TAB
 // ============================================
-function CalendarTab({ user, events: calEvents, loading, onFetchEvents, onAddEvent }) {
-  const [calView, setCalView] = useState('month'); // month | week
+function CalendarTab({ user, events: calEvents, loading, onFetchEvents, onAddEvent, onUpdateEvent, onDeleteEvent }) {
+  const [calView, setCalView] = useState('month');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  // Fetch events whenever month/view changes
-  useEffect(() => {
+  const fetchCurrentView = useCallback(() => {
     if (calView === 'month') {
-      const start = new Date(year, month, 1);
-      const end = new Date(year, month + 1, 0, 23, 59, 59);
-      onFetchEvents(start, end);
+      onFetchEvents(new Date(year, month - 1, 1), new Date(year, month + 2, 0, 23, 59, 59));
     } else {
-      const day = currentDate.getDay();
-      const start = new Date(currentDate);
-      start.setDate(start.getDate() - day);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(start);
-      end.setDate(end.getDate() + 6);
-      end.setHours(23, 59, 59);
+      const d = new Date(currentDate);
+      const dow = getMondayDow(d);
+      const start = new Date(d); start.setDate(start.getDate() - dow); start.setHours(0, 0, 0, 0);
+      const end = new Date(start); end.setDate(end.getDate() + 6); end.setHours(23, 59, 59);
       onFetchEvents(start, end);
     }
   }, [calView, year, month, currentDate, onFetchEvents]);
 
+  useEffect(() => { fetchCurrentView(); }, [fetchCurrentView]);
+
   const navigate = (dir) => {
     const d = new Date(currentDate);
-    if (calView === 'month') {
-      d.setMonth(d.getMonth() + dir);
-    } else {
-      d.setDate(d.getDate() + (dir * 7));
-    }
+    if (calView === 'month') d.setMonth(d.getMonth() + dir); else d.setDate(d.getDate() + (dir * 7));
     setCurrentDate(d);
   };
 
-  const handleAdd = async (event) => {
-    const success = await onAddEvent(event);
-    if (success) {
-      // Re-fetch
-      const start = new Date(year, month, 1);
-      const end = new Date(year, month + 1, 0, 23, 59, 59);
-      onFetchEvents(start, end);
-    }
-    return success;
-  };
+  const handleAdd = async (event) => { const s = await onAddEvent(event); if (s) fetchCurrentView(); return s; };
 
-  // Build month grid
-  const firstDay = new Date(year, month, 1).getDay();
+  const firstOfMonth = new Date(year, month, 1);
+  const firstDayDow = getMondayDow(firstOfMonth);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const daysInPrev = new Date(year, month, 0).getDate();
   const today = new Date();
 
   const cells = [];
-  // Previous month
-  for (let i = firstDay - 1; i >= 0; i--) {
-    cells.push({ day: daysInPrev - i, otherMonth: true, date: new Date(year, month - 1, daysInPrev - i) });
-  }
-  // Current month
-  for (let i = 1; i <= daysInMonth; i++) {
-    cells.push({ day: i, otherMonth: false, date: new Date(year, month, i), isToday: isSameDay(new Date(year, month, i), today) });
-  }
-  // Next month
-  const remaining = 42 - cells.length;
-  for (let i = 1; i <= remaining; i++) {
-    cells.push({ day: i, otherMonth: true, date: new Date(year, month + 1, i) });
-  }
+  for (let i = firstDayDow - 1; i >= 0; i--) cells.push({ day: daysInPrev - i, otherMonth: true, date: new Date(year, month - 1, daysInPrev - i) });
+  for (let i = 1; i <= daysInMonth; i++) cells.push({ day: i, otherMonth: false, date: new Date(year, month, i), isToday: isSameDay(new Date(year, month, i), today) });
+  const rem = Math.ceil(cells.length / 7) * 7 - cells.length;
+  for (let i = 1; i <= rem; i++) cells.push({ day: i, otherMonth: true, date: new Date(year, month + 1, i) });
 
-  // Map events to dates
   const getEventsForDate = (date) => {
     return calEvents.filter(ev => {
       const start = new Date(ev.start?.dateTime || ev.start?.date);
       const end = new Date(ev.end?.dateTime || ev.end?.date);
-      // For all-day events, end date is exclusive
       if (ev.start?.date) {
-        const endAdjusted = new Date(end);
-        endAdjusted.setDate(endAdjusted.getDate() - 1);
-        return date >= start && date <= endAdjusted;
+        const endAdj = new Date(end); endAdj.setDate(endAdj.getDate() - 1);
+        const sDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+        const eDay = new Date(endAdj.getFullYear(), endAdj.getMonth(), endAdj.getDate());
+        const cDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        return cDay >= sDay && cDay <= eDay;
       }
       return isSameDay(start, date);
     });
   };
 
-  // Week view data
   const weekStart = new Date(currentDate);
-  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const dow = getMondayDow(weekStart);
+  weekStart.setDate(weekStart.getDate() - dow);
   const weekDays = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(weekStart);
-    d.setDate(d.getDate() + i);
-    weekDays.push(d);
-  }
+  for (let i = 0; i < 7; i++) { const d = new Date(weekStart); d.setDate(d.getDate() + i); weekDays.push(d); }
 
   return (
     <>
-      {/* Calendar View Toggle */}
       <div className="cal-view-toggle">
         <button className={calView === 'month' ? 'active' : ''} onClick={() => setCalView('month')}>Month</button>
         <button className={calView === 'week' ? 'active' : ''} onClick={() => setCalView('week')}>Week</button>
       </div>
 
-      {/* Calendar Header */}
       <div className="cal-header">
         <h2>{calView === 'month' ? `${monthNames[month]} ${year}` : `Week of ${monthNames[weekStart.getMonth()]} ${weekStart.getDate()}`}</h2>
-        <div className="cal-nav">
-          <button onClick={() => navigate(-1)}>{Icons.left}</button>
-          <button onClick={() => navigate(1)}>{Icons.right}</button>
-        </div>
+        <div className="cal-nav"><button onClick={() => navigate(-1)}>{Icons.left}</button><button onClick={() => navigate(1)}>{Icons.right}</button></div>
       </div>
 
-      {/* Add Event */}
       <div className="section">
-        {showForm ? (
-          <AddEventForm user={user} onAdd={handleAdd} onCancel={() => setShowForm(false)} />
-        ) : (
-          <button className="add-form-toggle" onClick={() => setShowForm(true)}>
-            <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Add Event
-          </button>
+        {showForm ? <EventForm user={user} onSave={handleAdd} onCancel={() => setShowForm(false)} saveLabel="Add Event" /> : (
+          <button className="add-form-toggle" onClick={() => setShowForm(true)}><span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Add Event</button>
         )}
       </div>
 
       {loading && <div className="loading">Loading events...</div>}
 
-      {/* Month View */}
       {calView === 'month' && !loading && (
         <div className="month-grid">
-          <div className="month-grid-header">
-            {dayNames.map(d => <span key={d}>{d}</span>)}
-          </div>
+          <div className="month-grid-header">{dayNamesMon.map(d => <span key={d}>{d}</span>)}</div>
           <div className="month-grid-body">
             {cells.map((cell, i) => {
               const dayEvents = getEventsForDate(cell.date);
               return (
                 <div key={i} className={`month-day ${cell.otherMonth ? 'other-month' : ''} ${cell.isToday ? 'today' : ''}`}>
                   <div className="day-number">{cell.day}</div>
-                  {dayEvents.slice(0, 3).map((ev, j) => (
-                    <div key={j} className={`day-event ${getEventCategory(ev)}`}>
-                      {cleanEventTitle(ev)}
-                    </div>
-                  ))}
-                  {dayEvents.length > 3 && <div className="day-event default">+{dayEvents.length - 3} more</div>}
+                  {dayEvents.slice(0, 3).map((ev, j) => {
+                    const who = getEventWho(ev);
+                    return <div key={j} className={`day-event ${getWhoClass(who)}`} onClick={() => setEditingEvent(ev)}>{cleanEventTitle(ev)}</div>;
+                  })}
+                  {dayEvents.length > 3 && <div className="day-event who-default">+{dayEvents.length - 3}</div>}
                 </div>
               );
             })}
@@ -1405,7 +1362,6 @@ function CalendarTab({ user, events: calEvents, loading, onFetchEvents, onAddEve
         </div>
       )}
 
-      {/* Week View */}
       {calView === 'week' && !loading && (
         <div className="week-view">
           {weekDays.map((day, i) => {
@@ -1413,59 +1369,49 @@ function CalendarTab({ user, events: calEvents, loading, onFetchEvents, onAddEve
             const isToday = isSameDay(day, today);
             return (
               <div className="week-day-card" key={i}>
-                <div className={`week-day-label ${isToday ? 'today' : ''}`}>
-                  {dayNamesFull[day.getDay()]} {day.getDate()} {monthNames[day.getMonth()].slice(0, 3)}
-                </div>
-                {dayEvents.length === 0 ? (
-                  <div className="week-no-events">No events</div>
-                ) : (
-                  dayEvents.map((ev, j) => {
-                    const start = ev.start?.dateTime ? new Date(ev.start.dateTime) : null;
-                    const timeStr = start ? start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : 'All day';
-                    return (
-                      <div className="week-event" key={j}>
-                        <span className="week-event-title">{cleanEventTitle(ev)}</span>
-                        <span className="week-event-time">{timeStr}</span>
-                      </div>
-                    );
-                  })
-                )}
+                <div className={`week-day-label ${isToday ? 'today' : ''}`}>{dayNamesFullMon[i]} {day.getDate()} {monthNames[day.getMonth()].slice(0, 3)}</div>
+                {dayEvents.length === 0 ? <div className="week-no-events">No events</div> : dayEvents.map((ev, j) => {
+                  const who = getEventWho(ev);
+                  const startDt = ev.start?.dateTime ? new Date(ev.start.dateTime) : null;
+                  const endDt = ev.end?.dateTime ? new Date(ev.end.dateTime) : null;
+                  let timeStr = 'All day';
+                  if (startDt && endDt) {
+                    const s = startDt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+                    const e2 = endDt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+                    timeStr = `${s}–${e2}`;
+                  }
+                  return <div className={`week-event ${getWhoClass(who)}`} key={j} onClick={() => setEditingEvent(ev)}><span className="week-event-title">{cleanEventTitle(ev)}</span><span className="week-event-time">{timeStr}</span></div>;
+                })}
               </div>
             );
           })}
         </div>
       )}
 
-      {/* Upcoming Events List */}
       <div className="section">
         <div className="section-title">Upcoming</div>
-        {calEvents.length === 0 && !loading ? (
-          <div className="empty-state">No events this period.</div>
-        ) : (
-          calEvents.slice(0, 10).map((ev, i) => {
-            const cat = getEventCategory(ev);
-            const start = ev.start?.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start?.date);
-            const timeStr = ev.start?.dateTime
-              ? start.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + ' · ' + start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
-              : start.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + ' · All day';
-            return (
-              <div className="event-item" key={i}>
-                <div className={`event-dot ${cat}`} />
-                <div className="event-details">
-                  <div className="event-title">{cleanEventTitle(ev)}</div>
-                  <div className="event-meta">{getEventWho(ev)} · {timeStr}{ev.location ? ` · ${ev.location}` : ''}</div>
-                </div>
-              </div>
-            );
-          })
-        )}
+        {calEvents.length === 0 && !loading ? <div className="empty-state">No events this period.</div> : calEvents.slice(0, 10).map((ev, i) => {
+          const who = getEventWho(ev);
+          const start = ev.start?.dateTime ? new Date(ev.start.dateTime) : new Date(ev.start?.date);
+          const timeStr = ev.start?.dateTime
+            ? start.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + ' · ' + start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+            : start.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + ' · All day';
+          return (
+            <div className="event-item" key={i} onClick={() => setEditingEvent(ev)}>
+              <div className={`event-dot ${getWhoClass(who)}`} />
+              <div className="event-details"><div className="event-title">{cleanEventTitle(ev)}</div><div className="event-meta">{who} · {timeStr}{ev.location ? ` · ${ev.location}` : ''}</div></div>
+            </div>
+          );
+        })}
       </div>
+
+      {editingEvent && <EditEventModal event={editingEvent} user={user} onUpdate={onUpdateEvent} onDelete={onDeleteEvent} onClose={() => setEditingEvent(null)} onRefresh={fetchCurrentView} />}
     </>
   );
 }
 
 // ============================================
-// SIGN IN SCREEN
+// SIGN IN
 // ============================================
 function SignInScreen({ onSignIn, ready }) {
   return (
@@ -1473,12 +1419,7 @@ function SignInScreen({ onSignIn, ready }) {
       <h1>Family Planner</h1>
       <p>Sign in with Google to get started</p>
       <button className="google-btn" onClick={onSignIn} disabled={!ready}>
-        <svg viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
         Sign in with Google
       </button>
     </div>
@@ -1490,83 +1431,41 @@ function SignInScreen({ onSignIn, ready }) {
 // ============================================
 export default function App() {
   const { user, signIn, signOut, ready } = useGoogleAuth();
-  const { expenses, loading: expLoading, fetchExpenses, addExpense } = useSheets();
-  const { events, loading: calLoading, fetchEvents, addEvent } = useCalendar();
+  const { expenses, loading: expLoading, fetchExpenses, addExpense, updateExpense, deleteExpense } = useSheets();
+  const { events, loading: calLoading, fetchEvents, addEvent, updateEvent, deleteEvent } = useCalendar();
   const [tab, setTab] = useState('finances');
   const [toast, setToast] = useState(null);
 
-  const showToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2200);
-  };
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200); };
 
-  const handleAddExpense = async (expense) => {
-    const success = await addExpense(expense);
-    if (success) showToast('Expense added');
-    return success;
-  };
-
-  const handleAddEvent = async (event) => {
-    const success = await addEvent(event);
-    if (success) showToast('Event created');
-    return success;
-  };
-
-  if (!user) {
-    return (
-      <>
-        <style>{styles}</style>
-        <SignInScreen onSignIn={signIn} ready={ready} />
-      </>
-    );
-  }
+  if (!user) return (<><style>{styles}</style><SignInScreen onSignIn={signIn} ready={ready} /></>);
 
   return (
     <>
       <style>{styles}</style>
       <div className="app">
-        {/* Header */}
         <div className="header">
           <h1>Family Planner</h1>
-          <div className="header-right">
-            <span className="user-pill">{user.name}</span>
-            <button className="sign-out-btn" onClick={signOut}>Sign out</button>
-          </div>
+          <div className="header-right"><span className="user-pill">{user.name}</span><button className="sign-out-btn" onClick={signOut}>Sign out</button></div>
         </div>
 
-        {/* Tab Content */}
-        {tab === 'finances' && (
-          <FinancesTab
-            user={user}
-            expenses={expenses}
-            loading={expLoading}
-            onAddExpense={handleAddExpense}
-            onRefresh={fetchExpenses}
-          />
-        )}
-        {tab === 'calendar' && (
-          <CalendarTab
-            user={user}
-            events={events}
-            loading={calLoading}
-            onFetchEvents={fetchEvents}
-            onAddEvent={handleAddEvent}
-          />
-        )}
+        {tab === 'finances' && <FinancesTab user={user} expenses={expenses} loading={expLoading}
+          onAddExpense={async (e) => { const s = await addExpense(e); if (s) showToast('Expense added'); return s; }}
+          onUpdateExpense={async (r, e) => { const s = await updateExpense(r, e); if (s) showToast('Expense updated'); return s; }}
+          onDeleteExpense={async (r) => { const s = await deleteExpense(r); if (s) showToast('Expense deleted'); return s; }}
+          onRefresh={fetchExpenses} />}
 
-        {/* Toast */}
+        {tab === 'calendar' && <CalendarTab user={user} events={events} loading={calLoading}
+          onFetchEvents={fetchEvents}
+          onAddEvent={async (e) => { const s = await addEvent(e); if (s) showToast('Event created'); return s; }}
+          onUpdateEvent={async (id, e) => { const s = await updateEvent(id, e); if (s) showToast('Event updated'); return s; }}
+          onDeleteEvent={async (id) => { const s = await deleteEvent(id); if (s) showToast('Event deleted'); return s; }} />}
+
         {toast && <div className="toast">{toast}</div>}
 
-        {/* Tab Bar */}
         <div className="tab-bar">
-          <button className={`tab-btn ${tab === 'finances' ? 'active' : ''}`} onClick={() => setTab('finances')}>
-            {Icons.finances}
-            <span>Finances</span>
-          </button>
-          <button className={`tab-btn ${tab === 'calendar' ? 'active' : ''}`} onClick={() => setTab('calendar')}>
-            {Icons.calendar}
-            <span>Calendar</span>
-          </button>
+          <button className={`tab-btn ${tab === 'finances' ? 'active' : ''}`} onClick={() => setTab('finances')}>{Icons.finances}<span>Finances</span></button>
+          <button className={`tab-btn ${tab === 'calendar' ? 'active' : ''}`} onClick={() => setTab('calendar')}>{Icons.calendar}<span>Calendar</span></button>
         </div>
       </div>
     </>
