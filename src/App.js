@@ -8,7 +8,7 @@ const CONFIG = {
   API_KEY: 'AIzaSyBQlk6Ea_nl05ucjNFb2eMS4WDhIJc7Cs8',
   SPREADSHEET_ID: '1XebU3JkjbabjvVU_4ABmmrIPKNjrFTa9O5XKMqti2xc',
   CALENDAR_ID: '46706267f7316987a9408df500be5b14f9f0da5315547ad35ddde7773eefa330@group.calendar.google.com',
-  SCOPES: 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/calendar',
+  SCOPES: 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
   BUDGET_PER_PERSON: 1200,
   USERS: ['Telman', 'Lena'],
   EXPENSE_CATEGORIES: ['Food & Drink', 'Shopping', 'Activities & Entertainment', 'Travel', 'Health & Wellness'],
