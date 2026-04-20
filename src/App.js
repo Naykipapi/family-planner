@@ -124,10 +124,51 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-primary)
 .todo-history-item:hover{background:var(--bg-hover)}.todo-history-item:first-child{border-radius:var(--radius) var(--radius) 0 0}.todo-history-item:last-child{border-radius:0 0 var(--radius) var(--radius);margin-bottom:0}.todo-history-item:only-child{border-radius:var(--radius)}
 .todo-history-text{flex:1;text-decoration:line-through;color:var(--text-tertiary)}.todo-history-meta{font-size:11px;color:var(--text-tertiary);flex-shrink:0}
 .settle-card{margin:0 16px 16px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)}
-.settle-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:14px}
-.settle-row:last-child{margin-bottom:0}.settle-amount{font-weight:600;font-variant-numeric:tabular-nums}
-.settle-amount.owed{color:var(--red)}.settle-amount.owed-to{color:var(--green)}
-.settle-btn{padding:6px 12px;background:var(--green-bg);color:var(--green);border:1px solid #c8e6c9;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:12px;font-weight:600;cursor:pointer}
+.settle-net{font-family:var(--font-heading);font-size:16px;text-align:center;padding:8px 0;color:var(--text-primary)}
+.settle-breakdown{display:flex;justify-content:space-between;gap:16px;padding:8px 12px;margin-top:8px;background:var(--bg-input);border-radius:var(--radius-sm)}
+.settle-row-small{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--text-tertiary);flex:1}
+.settle-row-small span:first-child{text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.settle-amount-small{font-size:14px;font-weight:600;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.settle-btn-full{width:100%;margin-top:10px;padding:10px;background:var(--green-bg);color:var(--green);border:1px solid #c8e6c9;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer}
+.settle-btn-full:hover{background:#c8e6c9}
+/* Insights styles */
+.insight-summary{margin:0 16px 16px;padding:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)}
+.insight-big{font-family:var(--font-heading);font-size:32px;letter-spacing:-.5px;margin-bottom:4px}
+.insight-change-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.insight-change-pill.up{background:var(--red-bg);color:var(--red)}
+.insight-change-pill.down{background:var(--green-bg);color:var(--green)}
+.insight-change-pill.flat{background:var(--bg-input);color:var(--text-tertiary)}
+.account-split-row{display:flex;gap:8px;padding:12px 14px;background:var(--bg-card);border:1px solid var(--border);margin-bottom:-1px;align-items:center}
+.account-split-row:first-child{border-radius:var(--radius) var(--radius) 0 0}.account-split-row:last-child{border-radius:0 0 var(--radius) var(--radius);margin-bottom:0}
+.account-split-label{font-weight:500;flex:1}.account-split-bar{flex:2;height:10px;background:var(--bg-input);border-radius:3px;overflow:hidden}
+.account-split-fill{height:100%;background:var(--accent)}
+.account-split-val{font-weight:600;font-variant-numeric:tabular-nums;font-size:13px;min-width:70px;text-align:right}
+.cat-drill-row{background:var(--bg-card);border:1px solid var(--border);margin-bottom:-1px;padding:0;overflow:hidden;cursor:pointer;transition:background .15s}
+.cat-drill-row:first-child{border-radius:var(--radius) var(--radius) 0 0}.cat-drill-row:last-child{border-radius:0 0 var(--radius) var(--radius);margin-bottom:0}.cat-drill-row:only-child{border-radius:var(--radius)}
+.cat-drill-head{padding:10px 14px;display:flex;align-items:center;gap:8px}.cat-drill-head:hover{background:var(--bg-hover)}
+.cat-drill-label{flex:1;font-weight:500;font-size:14px}
+.cat-drill-pct{font-size:11px;color:var(--text-tertiary);background:var(--bg-input);padding:2px 6px;border-radius:10px}
+.cat-drill-amount{font-weight:600;font-variant-numeric:tabular-nums;font-size:14px}
+.cat-drill-arrow{color:var(--text-tertiary);font-size:12px;transition:transform .2s}
+.cat-drill-arrow.open{transform:rotate(90deg)}
+.cat-drill-body{background:var(--bg-input);padding:8px 14px;border-top:1px solid var(--border);font-size:12px}
+.cat-drill-item{display:flex;justify-content:space-between;padding:4px 0;color:var(--text-secondary)}
+.cat-drill-item-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.cat-drill-item-meta{font-size:10px;color:var(--text-tertiary)}
+.cat-drill-compare{font-size:10px;margin-left:6px}
+.top-exp-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);margin-bottom:-1px;font-size:13px}
+.top-exp-row:first-child{border-radius:var(--radius) var(--radius) 0 0}.top-exp-row:last-child{border-radius:0 0 var(--radius) var(--radius);margin-bottom:0}
+.top-exp-rank{font-family:var(--font-heading);font-size:16px;color:var(--text-tertiary);width:20px}
+.top-exp-name{flex:1;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-exp-meta{font-size:11px;color:var(--text-tertiary)}
+.top-exp-amount{font-weight:600;font-variant-numeric:tabular-nums}
+.tag-row{display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);margin-bottom:-1px;font-size:14px}
+.tag-row:first-child{border-radius:var(--radius) var(--radius) 0 0}.tag-row:last-child{border-radius:0 0 var(--radius) var(--radius);margin-bottom:0}.tag-row:only-child{border-radius:var(--radius)}
+.tag-label{font-weight:500;color:var(--text-secondary)}.tag-amount{font-weight:600;font-variant-numeric:tabular-nums}
+.sparkline{display:flex;align-items:flex-end;gap:2px;height:30px;margin:8px 0}
+.sparkline-bar{flex:1;background:var(--accent);opacity:0.3;border-radius:1px;min-height:2px;transition:opacity .2s}
+.sparkline-bar.current{opacity:1}
+.insight-period-picker{margin-bottom:12px}
 .event-banner{margin:0 16px 12px;padding:10px 14px;background:var(--color-telman-bg);border:1px solid #bbdefb;border-radius:var(--radius);font-size:13px;display:flex;align-items:center;gap:8px}
 .event-banner-dot{width:6px;height:6px;border-radius:50%;background:var(--color-telman);flex-shrink:0;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
@@ -208,34 +249,43 @@ function EditEventModal({event,user,onUpdate,onDelete,onClose,onRefresh}){const[
 // #29: EVENT BANNER
 function EventBanner({events}){const now=new Date();const twoHours=new Date(now.getTime()+2*60*60*1000);const upcoming=events.filter(ev=>{if(!ev.start?.dateTime)return false;const s=new Date(ev.start.dateTime);return s>now&&s<=twoHours}).sort((a,b)=>new Date(a.start.dateTime)-new Date(b.start.dateTime));if(upcoming.length===0)return null;const ev=upcoming[0];const s=new Date(ev.start.dateTime);const mins=Math.round((s-now)/60000);const timeLabel=mins<60?`in ${mins} min`:`in ${Math.floor(mins/60)}h ${mins%60}m`;return(<div className="event-banner"><div className="event-banner-dot"/><div className="event-banner-text">{cleanEventTitle(ev)}</div><div className="event-banner-time">{timeLabel}</div></div>)}
 
-// #26: SETTLEMENT DASHBOARD
+// #26: SETTLEMENT DASHBOARD with net view
 function SettlementCard({expenses,settings,user,onSettle}){
   const settledT=settings.settledTelman?new Date(settings.settledTelman):new Date(0);
   const settledL=settings.settledLena?new Date(settings.settledLena):new Date(0);
-  // Telman owes Lena: Family expenses where Lena paid (account=DB, who=Family, added by Lena inferred) + Telman used DB for personal
-  // Simplified: Family+ING → Telman paid → Lena owes 50%. Family+DB → we assume Lena paid → Telman owes 50%. Personal+ING by Lena → Lena owes full. Personal+DB by Telman → impossible (Telman uses ING).
-  // Per conversation: ING = Telman's/shared. DB = personal (whoever's expense). Family expenses: who added = who paid. Since we can't track who added, use account: ING=Telman paid, DB=Lena paid.
   let telmanOwes=0,lenaOwes=0;
   expenses.forEach(ex=>{
     const d=new Date(ex.date);
     if(ex.who==='Family'){
-      if(ex.account==='ING'){// Telman paid via ING → Lena owes 50%
+      if(ex.account==='ING'){// Telman paid → Lena owes 50%
         if(d>settledL)lenaOwes+=ex.amount/2;
       }else{// DB → Lena paid → Telman owes 50%
         if(d>settledT)telmanOwes+=ex.amount/2;
       }
-    }else if(ex.who==='Lena'&&ex.account==='ING'){// Lena used ING (Telman's) → Lena owes full
+    }else if(ex.who==='Lena'&&ex.account==='ING'){
       if(d>settledL)lenaOwes+=ex.amount;
-    }else if(ex.who==='Telman'&&ex.account==='DB'){// Telman used DB (unusual but possible)
-      // This would be Telman's own DB, no owed
     }
   });
   telmanOwes=Math.round(telmanOwes);lenaOwes=Math.round(lenaOwes);
   if(telmanOwes===0&&lenaOwes===0)return null;
+  const net=telmanOwes-lenaOwes;// positive = Telman owes Lena net; negative = Lena owes Telman net
+  const netAbs=Math.abs(net);
   const isTelman=user.name==='Telman';
+  // Settlement label logic
+  let netLine=null;
+  if(netAbs>0){
+    if(net>0)netLine=`Telman to transfer Lena ${formatCurrency(netAbs)}`;
+    else netLine=`Lena to transfer Telman ${formatCurrency(netAbs)}`;
+  }else netLine='All square';
+  // Button: show user's own settle button if they owe
+  const userOwes=isTelman?telmanOwes:lenaOwes;
   return(<div className="settle-card">
-    {telmanOwes>0&&<div className="settle-row"><span>Telman owes Lena</span><span className={`settle-amount ${isTelman?'owed':'owed-to'}`}>{formatCurrency(telmanOwes)}</span>{isTelman&&<button className="settle-btn" onClick={()=>onSettle('Telman')}>Settle</button>}</div>}
-    {lenaOwes>0&&<div className="settle-row"><span>Lena owes Telman</span><span className={`settle-amount ${!isTelman?'owed':'owed-to'}`}>{formatCurrency(lenaOwes)}</span>{!isTelman&&<button className="settle-btn" onClick={()=>onSettle('Lena')}>Settle</button>}</div>}
+    <div className="settle-net">{netLine}</div>
+    <div className="settle-breakdown">
+      <div className="settle-row-small"><span>Telman owes Lena</span><span className="settle-amount-small">{formatCurrency(telmanOwes)}</span></div>
+      <div className="settle-row-small"><span>Lena owes Telman</span><span className="settle-amount-small">{formatCurrency(lenaOwes)}</span></div>
+    </div>
+    {userOwes>0&&<button className="settle-btn-full" onClick={()=>onSettle(user.name)}>Mark my share as settled ({formatCurrency(userOwes)})</button>}
   </div>);
 }
 
@@ -325,33 +375,106 @@ function TodosTab({user,todos,loading,onAdd,onUpdate,onDelete,onRefresh}){
 }
 function EditTodoModal({todo,user,onUpdate,onDelete,onClose}){const[form,setForm]=useState({task:todo.task,who:todo.who});const[sv,setSv]=useState(false);const[cd,setCd]=useState(false);const[dl,setDl]=useState(false);if(cd)return(<div className="modal-overlay" onClick={onClose}><div className="modal-content" onClick={e=>e.stopPropagation()}><div className="confirm-dialog"><p>Delete "{todo.task}"?</p><div className="confirm-actions"><button className="btn-secondary" onClick={()=>setCd(false)}>Cancel</button><button className="btn-delete" onClick={async()=>{setDl(true);await onDelete(todo.rowIndex);setDl(false);onClose()}} disabled={dl}>{dl?'...':'Delete'}</button></div></div></div></div>);return(<div className="modal-overlay" onClick={onClose}><div className="modal-content" onClick={e=>e.stopPropagation()}><div className="modal-header"><h3>Edit Task</h3><button className="modal-close" onClick={onClose}>✕</button></div><div className="add-form"><div className="form-row"><div className="form-field"><label>Task</label><input value={form.task} onChange={e=>setForm(f=>({...f,task:e.target.value}))}/></div></div><div className="form-row"><div className="form-field"><label>Who</label><select value={form.who} onChange={e=>setForm(f=>({...f,who:e.target.value}))}>{[...CONFIG.USERS,'Both'].map(u=><option key={u}>{u}</option>)}</select></div></div><div className="form-actions"><button className="btn-secondary" onClick={onClose}>Cancel</button><button className="btn-primary" onClick={async()=>{setSv(true);await onUpdate(todo.rowIndex,{...todo,task:form.task,who:form.who});setSv(false);onClose()}} disabled={!form.task||sv}>{sv?'...':'Save'}</button></div></div><button className="btn-delete" onClick={()=>setCd(true)}>Delete Task</button></div></div>)}
 
-// #28: INSIGHTS TAB
+// #28: ENHANCED INSIGHTS TAB
 function InsightsTab({user,expenses,settings}){
+  const[viewMode,setViewMode]=useState('individual');// individual | combined
+  const[expandedCat,setExpandedCat]=useState(null);
   const now=new Date();const{start:cs}=getCycleDates(settings.cycleDay,now,settings.overrideDate);
-  // Build 6 periods of data
-  const periods=[];for(let i=0;i<6;i++){const s=new Date(cs);s.setMonth(s.getMonth()-i);const e=new Date(s);e.setMonth(e.getMonth()+1);e.setDate(e.getDate()-1);const pExp=expenses.filter(ex=>{const d=new Date(ex.date);return d>=s&&d<=e&&(ex.who===user.name||ex.who==='Family')});const total=pExp.reduce((sum,ex)=>sum+(ex.who==='Family'?ex.amount/2:ex.amount),0);const byCat={};pExp.forEach(ex=>{const a=ex.who==='Family'?ex.amount/2:ex.amount;byCat[ex.category]=(byCat[ex.category]||0)+a});periods.push({label:formatPeriod(s,e),total:Math.round(total),byCat,start:s,end:e})}
+  // Build 6 periods of data with chosen view
+  const calcForPeriod=(pExp)=>{const byCat={};const byAcc={ING:0,DB:0};let total=0;pExp.forEach(ex=>{const a=(viewMode==='individual'&&ex.who==='Family')?ex.amount/2:ex.amount;total+=a;byCat[ex.category]=(byCat[ex.category]||0)+a;if(ex.account&&byAcc[ex.account]!==undefined)byAcc[ex.account]+=a});return{total:Math.round(total),byCat,byAcc}};
+  const filterForView=(ex)=>viewMode==='individual'?(ex.who===user.name||ex.who==='Family'):true;
+  const periods=[];
+  for(let i=0;i<6;i++){const s=new Date(cs);s.setMonth(s.getMonth()-i);const e=new Date(s);e.setMonth(e.getMonth()+1);e.setDate(e.getDate()-1);const pExp=expenses.filter(ex=>{const d=new Date(ex.date);return d>=s&&d<=e&&filterForView(ex)});const calc=calcForPeriod(pExp);periods.push({label:formatPeriod(s,e),...calc,exps:pExp,start:s,end:e})}
   const current=periods[0];const prev=periods[1];
   const change=prev&&prev.total>0?Math.round(((current.total-prev.total)/prev.total)*100):0;
+  const budget=viewMode==='individual'?CONFIG.BUDGET_PER_PERSON:CONFIG.BUDGET_PER_PERSON*2;
+  const pctBudget=Math.round((current.total/budget)*100);
   const catList=Object.entries(current.byCat).sort((a,b)=>b[1]-a[1]);
   const maxCat=catList.length>0?catList[0][1]:1;
+  const accTotal=(current.byAcc.ING||0)+(current.byAcc.DB||0);
+  // Top 10 expenses
+  const topExps=[...current.exps].map(ex=>({...ex,displayAmount:(viewMode==='individual'&&ex.who==='Family')?ex.amount/2:ex.amount})).sort((a,b)=>b.displayAmount-a.displayAmount).slice(0,10);
+  // Tag summary
+  const byTag={};current.exps.forEach(ex=>{if(ex.tag&&ex.tag.trim()){const a=(viewMode==='individual'&&ex.who==='Family')?ex.amount/2:ex.amount;byTag[ex.tag]=(byTag[ex.tag]||0)+a}});const tagList=Object.entries(byTag).sort((a,b)=>b[1]-a[1]);
+  // Family expenses for combined view only
+  const familyExps=viewMode==='combined'?current.exps.filter(ex=>ex.who==='Family'):[];
+  const familyTotal=familyExps.reduce((s,ex)=>s+ex.amount,0);
+  // Sparkline
+  const maxPeriodTotal=Math.max(...periods.map(p=>p.total),1);
 
   return(<>
-    <div className="section">
-      <div className="section-title">Current Period</div>
-      <div className="insight-card">
-        <div className="insight-title">Total Spent</div>
-        <div className="insight-value">{formatCurrency(current.total)}</div>
-        <div className="insight-sub">{current.label}{change!==0&&<span className={`trend-change ${change>0?'trend-up':'trend-down'}`}> {change>0?'↑':'↓'}{Math.abs(change)}% vs last</span>}</div>
+    <div className="view-toggle"><button className={viewMode==='individual'?'active':''} onClick={()=>setViewMode('individual')}>{user.name}</button><button className={viewMode==='combined'?'active':''} onClick={()=>setViewMode('combined')}>Combined</button></div>
+
+    {/* Section 1: Period Summary */}
+    <div className="insight-summary">
+      <div style={{fontSize:11,textTransform:'uppercase',letterSpacing:.8,color:'var(--text-tertiary)',fontWeight:600,marginBottom:6}}>Current Period · {current.label}</div>
+      <div className="insight-big">{formatCurrency(current.total)}</div>
+      <div style={{display:'flex',alignItems:'center',gap:8,marginTop:4,flexWrap:'wrap'}}>
+        <span style={{fontSize:12,color:'var(--text-tertiary)'}}>{pctBudget}% of {formatCurrency(budget)} budget</span>
+        {change!==0&&<span className={`insight-change-pill ${change>0?'up':change<0?'down':'flat'}`}>{change>0?'↑':'↓'} {Math.abs(change)}% vs last</span>}
+      </div>
+      <div className="sparkline">
+        {[...periods].reverse().map((p,i)=>(<div key={i} className={`sparkline-bar ${i===periods.length-1?'current':''}`} style={{height:`${(p.total/maxPeriodTotal)*100}%`}}/>))}
       </div>
     </div>
-    {catList.length>0&&<div className="section">
-      <div className="section-title">Spending by Category</div>
-      <div className="insight-card">{catList.map(([c,a])=>(<div className="insight-bar-row" key={c}><span className="insight-bar-label">{CATEGORY_ICONS[c]||'•'} {c}</span><div className="insight-bar-track"><div className="insight-bar-fill" style={{width:`${(a/maxCat)*100}%`}}/></div><span className="insight-bar-val">{formatCurrency(a)}</span></div>))}</div>
+
+    {/* Section 2: Account Split */}
+    {accTotal>0&&<div className="section">
+      <div className="section-title">By Account</div>
+      {['ING','DB'].map(acc=>{const v=current.byAcc[acc]||0;const pct=accTotal>0?(v/accTotal)*100:0;return(<div className="account-split-row" key={acc}><span className="account-split-label">{acc}</span><div className="account-split-bar"><div className="account-split-fill" style={{width:`${pct}%`}}/></div><span className="account-split-val">{formatCurrency(v)}</span></div>)})}
     </div>}
+
+    {/* Section 3: Category Breakdown with Drill-down */}
+    {catList.length>0&&<div className="section">
+      <div className="section-title">By Category (tap to expand)</div>
+      {catList.map(([c,a])=>{
+        const prevCat=prev?.byCat?.[c]||0;
+        const catChange=prevCat>0?Math.round(((a-prevCat)/prevCat)*100):null;
+        const pctOfBudget=Math.round((a/budget)*100);
+        const isOpen=expandedCat===c;
+        const top5=current.exps.filter(ex=>ex.category===c).map(ex=>({...ex,displayAmount:(viewMode==='individual'&&ex.who==='Family')?ex.amount/2:ex.amount})).sort((x,y)=>y.displayAmount-x.displayAmount).slice(0,5);
+        return(<div className="cat-drill-row" key={c}>
+          <div className="cat-drill-head" onClick={()=>setExpandedCat(isOpen?null:c)}>
+            <span className="cat-drill-arrow" style={{transform:isOpen?'rotate(90deg)':'none'}}>▸</span>
+            <span className="cat-drill-label">{CATEGORY_ICONS[c]||'•'} {c}</span>
+            <span className="cat-drill-pct">{pctOfBudget}%</span>
+            <span className="cat-drill-amount">{formatCurrency(a)}</span>
+          </div>
+          {isOpen&&<div className="cat-drill-body">
+            {catChange!==null&&<div style={{paddingBottom:6,fontSize:11,color:'var(--text-tertiary)'}}>vs last period: <span className={catChange>0?'trend-up':'trend-down'}>{catChange>0?'↑':'↓'} {Math.abs(catChange)}%</span> ({formatCurrency(prevCat)})</div>}
+            {top5.length===0?<div style={{padding:8,color:'var(--text-tertiary)',fontStyle:'italic'}}>No items</div>:top5.map((ex,i)=>(<div className="cat-drill-item" key={i}><div><div className="cat-drill-item-name">{ex.merchant}{ex.who==='Family'&&viewMode==='individual'?' (split)':''}</div><div className="cat-drill-item-meta">{formatDate(ex.date)} · {ex.account||'—'}</div></div><div style={{fontWeight:600,fontVariantNumeric:'tabular-nums'}}>{formatCurrency(ex.displayAmount)}</div></div>))}
+          </div>}
+        </div>);
+      })}
+    </div>}
+
+    {/* Section 4: Family Expenses (combined only) */}
+    {viewMode==='combined'&&familyExps.length>0&&<div className="section">
+      <div className="section-title">Family Expenses This Period</div>
+      <div className="insight-summary" style={{margin:0}}>
+        <div style={{fontSize:12,color:'var(--text-tertiary)'}}>Total shared spend</div>
+        <div className="insight-big" style={{fontSize:22}}>{formatCurrency(familyTotal)}</div>
+        <div style={{fontSize:12,color:'var(--text-tertiary)',marginTop:4}}>{familyExps.length} transaction{familyExps.length!==1?'s':''}</div>
+      </div>
+    </div>}
+
+    {/* Section 5: Top 10 Expenses */}
+    {topExps.length>0&&<div className="section">
+      <div className="section-title">Top Expenses</div>
+      {topExps.map((ex,i)=>(<div className="top-exp-row" key={i}><span className="top-exp-rank">{i+1}</span><div style={{flex:1,minWidth:0}}><div className="top-exp-name">{ex.merchant}{ex.who==='Family'&&viewMode==='individual'?' (split)':''}</div><div className="top-exp-meta">{formatDate(ex.date)} · {ex.category}{ex.account?` · ${ex.account}`:''}</div></div><span className="top-exp-amount">{formatCurrency(ex.displayAmount)}</span></div>))}
+    </div>}
+
+    {/* Section 6: 6-Period Trend */}
     <div className="section">
       <div className="section-title">6-Period Trend</div>
       <div className="insight-card">{periods.map((p,i)=>{const prevP=periods[i+1];const ch=prevP&&prevP.total>0?Math.round(((p.total-prevP.total)/prevP.total)*100):0;return(<div className="trend-row" key={i}><span className="trend-label">{p.label}</span><span className="trend-val">{formatCurrency(p.total)}{i<periods.length-1&&ch!==0&&<span className={`trend-change ${ch>0?'trend-up':'trend-down'}`}>{ch>0?'↑':'↓'}{Math.abs(ch)}%</span>}</span></div>)})}</div>
     </div>
+
+    {/* Section 7: Tag Summary */}
+    {tagList.length>0&&<div className="section">
+      <div className="section-title">By Tag</div>
+      {tagList.map(([t,a])=>(<div className="tag-row" key={t}><span className="tag-label">{t}</span><span className="tag-amount">{formatCurrency(a)}</span></div>))}
+    </div>}
   </>);
 }
 
