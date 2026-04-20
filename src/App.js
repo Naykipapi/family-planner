@@ -124,12 +124,13 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text-primary)
 .todo-history-item:hover{background:var(--bg-hover)}.todo-history-item:first-child{border-radius:var(--radius) var(--radius) 0 0}.todo-history-item:last-child{border-radius:0 0 var(--radius) var(--radius);margin-bottom:0}.todo-history-item:only-child{border-radius:var(--radius)}
 .todo-history-text{flex:1;text-decoration:line-through;color:var(--text-tertiary)}.todo-history-meta{font-size:11px;color:var(--text-tertiary);flex-shrink:0}
 .settle-card{margin:0 16px 16px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)}
-.settle-net{font-family:var(--font-heading);font-size:16px;text-align:center;padding:8px 0;color:var(--text-primary)}
-.settle-breakdown{display:flex;justify-content:space-between;gap:16px;padding:8px 12px;margin-top:8px;background:var(--bg-input);border-radius:var(--radius-sm)}
+.settle-breakdown{display:flex;justify-content:space-between;gap:16px;padding:10px 14px;background:var(--bg-input);border-radius:var(--radius-sm);margin-bottom:12px}
 .settle-row-small{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--text-tertiary);flex:1}
 .settle-row-small span:first-child{text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-.settle-amount-small{font-size:14px;font-weight:600;color:var(--text-primary);font-variant-numeric:tabular-nums}
-.settle-btn-full{width:100%;margin-top:10px;padding:10px;background:var(--green-bg);color:var(--green);border:1px solid #c8e6c9;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer}
+.settle-amount-small{font-size:15px;font-weight:600;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.settle-net{font-family:var(--font-body);font-size:14px;text-align:center;padding:8px 0 14px;color:var(--text-primary);line-height:1.4}
+.settle-net strong{font-family:var(--font-heading);font-size:18px;font-weight:400;margin:0 2px}
+.settle-btn-full{width:100%;padding:10px;background:var(--green-bg);color:var(--green);border:1px solid #c8e6c9;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer}
 .settle-btn-full:hover{background:#c8e6c9}
 /* Insights styles */
 .insight-summary{margin:0 16px 16px;padding:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)}
@@ -268,24 +269,20 @@ function SettlementCard({expenses,settings,user,onSettle}){
   });
   telmanOwes=Math.round(telmanOwes);lenaOwes=Math.round(lenaOwes);
   if(telmanOwes===0&&lenaOwes===0)return null;
-  const net=telmanOwes-lenaOwes;// positive = Telman owes Lena net; negative = Lena owes Telman net
+  const net=telmanOwes-lenaOwes;
   const netAbs=Math.abs(net);
-  const isTelman=user.name==='Telman';
-  // Settlement label logic
   let netLine=null;
   if(netAbs>0){
-    if(net>0)netLine=`Telman to transfer Lena ${formatCurrency(netAbs)}`;
-    else netLine=`Lena to transfer Telman ${formatCurrency(netAbs)}`;
-  }else netLine='All square';
-  // Button: show user's own settle button if they owe
-  const userOwes=isTelman?telmanOwes:lenaOwes;
+    if(net>0)netLine=<>Net settlement: Telman to transfer <strong>{formatCurrency(netAbs)}</strong> to Lena</>;
+    else netLine=<>Net settlement: Lena to transfer <strong>{formatCurrency(netAbs)}</strong> to Telman</>;
+  }else netLine=<>Net settlement: <strong>All square</strong></>;
   return(<div className="settle-card">
-    <div className="settle-net">{netLine}</div>
     <div className="settle-breakdown">
-      <div className="settle-row-small"><span>Telman owes Lena</span><span className="settle-amount-small">{formatCurrency(telmanOwes)}</span></div>
-      <div className="settle-row-small"><span>Lena owes Telman</span><span className="settle-amount-small">{formatCurrency(lenaOwes)}</span></div>
+      <div className="settle-row-small"><span>Telman owes</span><span className="settle-amount-small">{formatCurrency(telmanOwes)}</span></div>
+      <div className="settle-row-small"><span>Lena owes</span><span className="settle-amount-small">{formatCurrency(lenaOwes)}</span></div>
     </div>
-    {userOwes>0&&<button className="settle-btn-full" onClick={()=>onSettle(user.name)}>Mark my share as settled ({formatCurrency(userOwes)})</button>}
+    <div className="settle-net">{netLine}</div>
+    <button className="settle-btn-full" onClick={()=>onSettle('Both')}>Mark both shares settled</button>
   </div>);
 }
 
@@ -508,7 +505,7 @@ export default function App(){
   useEffect(()=>{if(user){const now=new Date();const end=new Date(now);end.setDate(end.getDate()+1);fetchEvents(now,end)}},[user,fetchEvents]);
 
   const showToast=m=>{setToast(m);setTimeout(()=>setToast(null),2200)};
-  const handleSettle=async(who)=>{const today=new Date().toISOString().split('T')[0];const ns={...settings};if(who==='Telman')ns.settledTelman=today;else ns.settledLena=today;await saveSettings(ns);showToast(`${who}'s balance settled`)};
+  const handleSettle=async(who)=>{const today=new Date().toISOString().split('T')[0];const ns={...settings};if(who==='Both'){ns.settledTelman=today;ns.settledLena=today}else if(who==='Telman')ns.settledTelman=today;else ns.settledLena=today;await saveSettings(ns);showToast(who==='Both'?'Balances settled':`${who}'s balance settled`)};
 
   if(pa&&user)return(<><style>{styles}</style><PendingAction data={pa} user={user} onAddExpense={async e=>{return await addExpense(e)}} onAddEvent={async e=>{return await addEvent(e)}} onDismiss={()=>setPa(null)} fetchExpenses={fetchExpenses}/></>);
   if(pa&&!user)return(<><style>{styles}</style><div className="sign-in-screen"><h1>Family Planner</h1><p>Sign in to confirm</p><button className="google-btn" onClick={signIn} disabled={!ready}><GoogleIcon/> Sign in with Google</button></div></>);
